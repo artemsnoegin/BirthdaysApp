@@ -7,11 +7,9 @@
 
 import Foundation
 
-class MockRepository {
+class MockRepository: Repository {
     
-    static let shared = MockRepository()
-    
-    var celebrants = [
+    private var storage = [
         Celebrant(name: "Artem", surname: "Snoegin",
                 birthday: Calendar.current.date(from: DateComponents(year: 1998, month: 08, day: 17))!),
         Celebrant(name: "Andrey", surname: "Zarecky",
@@ -21,4 +19,22 @@ class MockRepository {
         Celebrant(name: "Kaspi", surname: "Atlas Jerry",
                 birthday: Calendar.current.date(from: DateComponents(year: 2014, month: 11, day: 20))!),
     ]
+    
+    func fetch() -> [Celebrant] {
+        storage
+    }
+    
+    func save(_ celebrant: Celebrant) {
+        storage.append(celebrant)
+    }
+    
+    func update(_ celebrant: Celebrant) {
+        guard let index = storage.firstIndex(where: { $0.id == celebrant.id }) else { return }
+        storage[index] = celebrant
+    }
+    
+    func delete(_ celebrant: Celebrant) {
+        guard let index = storage.firstIndex(where: { $0.id == celebrant.id }) else { return }
+        storage.remove(at: index)
+    }
 }

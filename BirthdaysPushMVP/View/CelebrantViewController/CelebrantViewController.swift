@@ -24,10 +24,12 @@ class CelebrantViewController: UIViewController {
     
     private let contentView = UIView()
     
-    init(celebrant: Celebrant) {
+    init(celebrant: Celebrant, isEditing: Bool) {
         self.celebrant = celebrant
         
         super.init(nibName: nil, bundle: nil)
+        
+        self.isEditing = isEditing
     }
     
     required init?(coder: NSCoder) {
@@ -191,9 +193,9 @@ extension CelebrantViewController: UITextFieldDelegate {
     }
 }
 
-#Preview {
-    
-    let celebrant = MockRepository().celebrants[2]
-    let view = CelebrantViewController(celebrant: celebrant)
-    return UINavigationController(rootViewController: view)
-}
+//#Preview {
+//    
+//    let celebrants = MockRepository().fetch()
+//    let view = CelebrantViewController(celebrant: celebrants[1])
+//    return UINavigationController(rootViewController: view)
+//}

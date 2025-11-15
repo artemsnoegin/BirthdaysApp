@@ -15,7 +15,7 @@ struct Celebrant {
     var birthday: Date
     var notify: Bool
     
-    init(id: UUID = UUID(), name: String, surname: String, birthday: Date, notify: Bool = true) {
+    init(id: UUID = UUID(), name: String = "", surname: String = "", birthday: Date = .now, notify: Bool = true) {
         self.id = id
         self.name = name
         self.surname = surname
@@ -26,6 +26,7 @@ struct Celebrant {
     var age: Int {
         Calendar.current.dateComponents([.year], from: birthday, to: .now).year ?? 0
     }
+    
     var daysUntilNextBirthday: Int {
             let calendar = Calendar.current
             let now = Date()
