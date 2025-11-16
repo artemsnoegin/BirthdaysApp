@@ -12,6 +12,7 @@ class CelebrantViewController: UIViewController {
     var completion: ((Celebrant) -> Void)?
     
     private var celebrant: Celebrant
+    private var notificationManager = NotificationManager()
     
     private let ageLabel = UILabel()
     private let numberOfDaysUntilNextBirthdayLabel = UILabel()
@@ -41,7 +42,18 @@ class CelebrantViewController: UIViewController {
         
         setupUI()
         setupNavigationBar()
+        notificationManager.requestAuthorization()
     }
+    
+//    @objc private func setupNotification() {
+//        notificationManager.requestAuthorization()
+//        
+//        if notifySwitch.isOn {
+//            notificationManager.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
+//        } else {
+//            notificationManager.removeNotification(id: celebrant.id.uuidString)
+//        }
+//    }
     
     func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
@@ -70,6 +82,25 @@ class CelebrantViewController: UIViewController {
         
         ageLabel.text = "Age: \(celebrant.age)"
         numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
+        
+        if celebrant.daysUntilNextBirthday > 60 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
+        }
+        else if celebrant.daysUntilNextBirthday > 30 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
+        }
+        else if celebrant.daysUntilNextBirthday > 12 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
+        }
+        else {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
+        }
+        
+        if notifySwitch.isOn {
+            notificationManager.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
+        } else {
+            notificationManager.removeNotification(id: celebrant.id.uuidString)
+        }
         
         if !isEditing {
             
@@ -120,6 +151,7 @@ class CelebrantViewController: UIViewController {
         
         notifySwitch.isOn = celebrant.notify
         notifySwitch.isEnabled = isEditing
+//        notifySwitch.addTarget(self, action: #selector(setupNotification), for: .valueChanged)
         
         let notifyStack = UIStackView(arrangedSubviews: [notifyLabel, notifySwitch])
         
@@ -131,17 +163,17 @@ class CelebrantViewController: UIViewController {
         numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
         numberOfDaysUntilNextBirthdayLabel.font = .preferredFont(forTextStyle: .headline)
         
-        if celebrant.daysUntilNextBirthday < 12 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
+        if celebrant.daysUntilNextBirthday > 60 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
         }
-        else if celebrant.daysUntilNextBirthday < 30 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
-        }
-        else if celebrant.daysUntilNextBirthday < 60 {
+        else if celebrant.daysUntilNextBirthday > 30 {
             numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
         }
+        else if celebrant.daysUntilNextBirthday > 12 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
+        }
         else {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
         }
         
         let daysLeftStack = UIStackView(arrangedSubviews: [daysUntilNextBirthdayLabel, numberOfDaysUntilNextBirthdayLabel])

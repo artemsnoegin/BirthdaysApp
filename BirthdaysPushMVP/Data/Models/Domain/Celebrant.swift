@@ -37,7 +37,7 @@ struct Celebrant {
             var next = DateComponents(
                 year: calendar.component(.year, from: now),
                 month: birthComponents.month,
-                day: birthComponents.day
+                day: birthComponents.day! + 1
             )
             
             var nextBirthday = calendar.date(from: next)!
