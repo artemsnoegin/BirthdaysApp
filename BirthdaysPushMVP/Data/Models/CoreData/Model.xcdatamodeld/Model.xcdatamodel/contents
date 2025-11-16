@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CelebrantEntity" representedClassName=".CelebrantEntity" syncable="YES">
+        <attribute name="birthday" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="notify" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="photoPath" optional="YES" attributeType="String"/>
+        <attribute name="surname" attributeType="String" defaultValueString=""/>
+    </entity>
+</model>

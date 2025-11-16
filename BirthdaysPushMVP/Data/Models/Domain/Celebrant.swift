@@ -14,8 +14,9 @@ struct Celebrant {
     var surname: String
     var birthday: Date
     var notify: Bool
+    var photoPath: String?
     
-    init(id: UUID = UUID(), name: String = "", surname: String = "", birthday: Date = .now, notify: Bool = true) {
+    init(id: UUID = UUID(), name: String = "", surname: String = "", birthday: Date = .now, notify: Bool = true, photoPath: String? = nil) {
         self.id = id
         self.name = name
         self.surname = surname
@@ -23,6 +24,7 @@ struct Celebrant {
         self.notify = notify
     }
     
+    // TODO: refactor !
     var age: Int {
         Calendar.current.dateComponents([.year], from: birthday, to: .now).year ?? 0
     }

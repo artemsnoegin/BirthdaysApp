@@ -95,6 +95,7 @@ extension BirthdaysTableViewController: UITableViewDelegate, UITableViewDataSour
         if editingStyle == .delete {
             
             presenter.remove(at: indexPath.row)
+            // TODO: refactor ?
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }

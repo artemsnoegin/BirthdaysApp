@@ -24,7 +24,7 @@ class BirthdaysRouter {
     static func createModule() -> UIViewController {
         
         let router = BirthdaysRouter()
-        let repository = MockRepository()
+        let repository = CoreDataRepository()
         let presenter = BirthdaysPresenter(router: router, repository: repository)
         let view = BirthdaysTableViewController(presenter: presenter)
         router.viewController = view
