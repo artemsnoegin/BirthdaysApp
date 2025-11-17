@@ -7,12 +7,53 @@
 
 import UIKit
 
-class CelebrantViewController: UIViewController {
+protocol CelebrantPresenterProtocol {
     
-    var completion: ((Celebrant) -> Void)?
+    func viewDidLoad()
+    func updateCelebrant(name: String, surname: String, birthday: Date, notify: Bool)
+}
+
+class CelebrantPresenter: CelebrantPresenterProtocol {
+    
+    weak var view: CelebrantViewProtocol?
     
     private var celebrant: Celebrant
-    private var notificationManager = NotificationManager()
+    var completion: ((Celebrant) -> Void)?
+    
+    init(celebrant: Celebrant) {
+        self.celebrant = celebrant
+    }
+    
+    func viewDidLoad() {
+        
+        view?.configure(with: celebrant)
+    }
+    
+    func updateCelebrant(name: String, surname: String, birthday: Date, notify: Bool) {
+        celebrant.name = name
+        celebrant.surname = surname
+        celebrant.birthday = birthday
+        celebrant.notify = notify
+        
+        if notify {
+            NotificationManager.shared.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
+        } else {
+            NotificationManager.shared.removeNotification(id: celebrant.id.uuidString)
+        }
+        
+        view?.configure(with: celebrant)
+        completion?(celebrant)
+    }
+}
+
+protocol CelebrantViewProtocol: AnyObject {
+    
+    func configure(with celebrant: Celebrant)
+}
+
+class CelebrantViewController: UIViewController, CelebrantViewProtocol {
+    
+    private var presenter: CelebrantPresenterProtocol
     
     private let ageLabel = UILabel()
     private let numberOfDaysUntilNextBirthdayLabel = UILabel()
@@ -25,8 +66,8 @@ class CelebrantViewController: UIViewController {
     
     private let contentView = UIView()
     
-    init(celebrant: Celebrant, isEditing: Bool) {
-        self.celebrant = celebrant
+    init(presenter: CelebrantPresenterProtocol, isEditing: Bool) {
+        self.presenter = presenter
         
         super.init(nibName: nil, bundle: nil)
         
@@ -39,21 +80,35 @@ class CelebrantViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewDidLoad()
         
         setupUI()
         setupNavigationBar()
-        notificationManager.requestAuthorization()
     }
     
-//    @objc private func setupNotification() {
-//        notificationManager.requestAuthorization()
-//        
-//        if notifySwitch.isOn {
-//            notificationManager.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
-//        } else {
-//            notificationManager.removeNotification(id: celebrant.id.uuidString)
-//        }
-//    }
+    func configure(with celebrant: Celebrant) {
+        
+        nameTextField.text = celebrant.name
+        surnameTextField.text = celebrant.surname
+        ageLabel.text = "Age: \(celebrant.age)"
+        numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
+        
+        birthdayDatePicker.date = celebrant.birthday
+        notifySwitch.isOn = celebrant.notify
+        
+        if celebrant.daysUntilNextBirthday > 60 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
+        }
+        else if celebrant.daysUntilNextBirthday > 30 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
+        }
+        else if celebrant.daysUntilNextBirthday > 12 {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
+        }
+        else {
+            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
+        }
+    }
     
     func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
@@ -75,36 +130,12 @@ class CelebrantViewController: UIViewController {
         notifySwitch.isEnabled = isEditing
         birthdayDatePicker.isEnabled = isEditing
         
-        celebrant.name = nameTextField.text ?? ""
-        celebrant.surname = surnameTextField.text ?? ""
-        celebrant.birthday = birthdayDatePicker.date
-        celebrant.notify = notifySwitch.isOn
-        
-        ageLabel.text = "Age: \(celebrant.age)"
-        numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
-        
-        if celebrant.daysUntilNextBirthday > 60 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
-        }
-        else if celebrant.daysUntilNextBirthday > 30 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
-        }
-        else if celebrant.daysUntilNextBirthday > 12 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
-        }
-        else {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
-        }
-        
-        if notifySwitch.isOn {
-            notificationManager.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
-        } else {
-            notificationManager.removeNotification(id: celebrant.id.uuidString)
-        }
-        
         if !isEditing {
             
-            completion?(celebrant)
+            presenter.updateCelebrant(name: nameTextField.text ?? "",
+                                      surname: surnameTextField.text ?? "",
+                                      birthday: birthdayDatePicker.date,
+                                      notify: notifySwitch.isOn)
         }
     }
     
@@ -118,21 +149,17 @@ class CelebrantViewController: UIViewController {
         photoView.translatesAutoresizingMaskIntoConstraints = false
         
         nameTextField.placeholder = "Name"
-        nameTextField.text = celebrant.name
         nameTextField.font = .preferredFont(forTextStyle: .extraLargeTitle)
         nameTextField.isEnabled = isEditing
         nameTextField.delegate = self
         
         surnameTextField.placeholder = "Surname"
-        surnameTextField.text = celebrant.surname
         surnameTextField.font = .preferredFont(forTextStyle: .extraLargeTitle)
         surnameTextField.isEnabled = isEditing
         
-        ageLabel.text = "Age: \(celebrant.age)"
         ageLabel.font = .preferredFont(forTextStyle: .headline)
         ageLabel.textColor = .secondaryLabel
         
-        birthdayDatePicker.date = celebrant.birthday
         birthdayDatePicker.datePickerMode = .date
         birthdayDatePicker.preferredDatePickerStyle = .compact
         birthdayDatePicker.isEnabled = isEditing
@@ -149,9 +176,7 @@ class CelebrantViewController: UIViewController {
         notifyLabel.font = .preferredFont(forTextStyle: .headline)
         notifyLabel.textColor = .secondaryLabel
         
-        notifySwitch.isOn = celebrant.notify
         notifySwitch.isEnabled = isEditing
-//        notifySwitch.addTarget(self, action: #selector(setupNotification), for: .valueChanged)
         
         let notifyStack = UIStackView(arrangedSubviews: [notifyLabel, notifySwitch])
         
@@ -160,21 +185,7 @@ class CelebrantViewController: UIViewController {
         daysUntilNextBirthdayLabel.font = .preferredFont(forTextStyle: .headline)
         daysUntilNextBirthdayLabel.textColor = .secondaryLabel
         
-        numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
         numberOfDaysUntilNextBirthdayLabel.font = .preferredFont(forTextStyle: .headline)
-        
-        if celebrant.daysUntilNextBirthday > 60 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
-        }
-        else if celebrant.daysUntilNextBirthday > 30 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
-        }
-        else if celebrant.daysUntilNextBirthday > 12 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
-        }
-        else {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
-        }
         
         let daysLeftStack = UIStackView(arrangedSubviews: [daysUntilNextBirthdayLabel, numberOfDaysUntilNextBirthdayLabel])
         daysLeftStack.distribution = .equalSpacing

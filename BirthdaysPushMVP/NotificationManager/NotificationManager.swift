@@ -9,6 +9,8 @@ import UserNotifications
 
 class NotificationManager {
     
+    static let shared = NotificationManager()
+    
     private let notificationCentre = UNUserNotificationCenter.current()
     
     func requestAuthorization() {
@@ -30,7 +32,7 @@ class NotificationManager {
         content.sound = .default
         
         guard let day = Calendar.current.date(byAdding: .day, value: -1, to: birthday),
-              let time = Calendar.current.date(bySettingHour: 12, minute: 00, second: 0, of: day)
+              let time = Calendar.current.date(bySettingHour: 15, minute: 52, second: 0, of: day)
         else {
             print("Error setting date")
             return
@@ -40,12 +42,12 @@ class NotificationManager {
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         
-        let request = UNNotificationRequest(identifier: "Test", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         
         notificationCentre.add(request)
     }
     
     func removeNotification(id: String) {
-        notificationCentre.removePendingNotificationRequests(withIdentifiers: ["Test"])
+        notificationCentre.removePendingNotificationRequests(withIdentifiers: [id])
     }
 }

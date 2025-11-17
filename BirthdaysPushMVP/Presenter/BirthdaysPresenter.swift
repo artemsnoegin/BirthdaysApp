@@ -48,6 +48,7 @@ class BirthdaysPresenter: BirthdaysPresenterProtocol {
     func selectCelebrant(for index: Int) {
         
         let celebrant = birthdays[index]
+        
         router.showCelebrantViewController(celebrant, isEditing: false) { [weak self] celebrant in
             self?.update(celebrant)
             self?.view?.reloadTableView()

@@ -11,12 +11,12 @@ class BirthdaysRouter {
     
     weak var viewController: UIViewController?
     
-    func showCelebrantViewController(_ celebrant: Celebrant, isEditing: Bool, completion: @escaping ((Celebrant) -> Void)) {
+    func showCelebrantViewController(_ celebrant: Celebrant, isEditing: Bool, completion: @escaping (Celebrant) -> Void) {
         
-        let celebrantViewController = CelebrantViewController(celebrant: celebrant, isEditing: isEditing)
-        celebrantViewController.completion = { celebrant in
-            completion(celebrant)
-        }
+        let presenter = CelebrantPresenter(celebrant: celebrant)
+        presenter.completion = completion
+        let celebrantViewController = CelebrantViewController(presenter: presenter, isEditing: isEditing)
+        presenter.view = celebrantViewController
         
         viewController?.navigationController?.pushViewController(celebrantViewController, animated: true)
     }
@@ -25,10 +25,12 @@ class BirthdaysRouter {
         
         let router = BirthdaysRouter()
         let repository = CoreDataRepository()
+        
         let presenter = BirthdaysPresenter(router: router, repository: repository)
         let view = BirthdaysTableViewController(presenter: presenter)
-        router.viewController = view
         presenter.view = view
+        
+        router.viewController = view
         
         return view
     }
