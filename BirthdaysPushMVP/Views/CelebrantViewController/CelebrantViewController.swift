@@ -28,6 +28,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     private let notifySwitch = UISwitch()
     
     private let contentView = UIView()
+    private var contentViewBottomAnchorConstraint: NSLayoutConstraint!
     
     init(presenter: CelebrantPresenterProtocol, isEditing: Bool) {
         self.presenter = presenter
@@ -49,6 +50,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         setupUI()
         setupNavigationBar()
         addHideKeyboardOnTapGesture()
+        subscribeNotification()
     }
     
     func configureNameProperties(name: String, surname: String) {
@@ -85,7 +87,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         notifySwitch.isOn = isOn
     }
     
-    func setupUI() {
+    private func setupUI() {
         view.backgroundColor = .systemBackground
         
         let photoView = UIImageView()
@@ -151,13 +153,17 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         view.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
+        
+        
+        contentViewBottomAnchorConstraint = contentView.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -30)
+        contentViewBottomAnchorConstraint.isActive = true
+        
         NSLayoutConstraint.activate([
             photoView.topAnchor.constraint(equalTo: view.topAnchor),
             photoView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             photoView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             photoView.heightAnchor.constraint(equalTo: photoView.widthAnchor),
             
-            contentView.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -30),
             contentView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -168,29 +174,22 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         ])
     }
     
-    func setupNavigationBar() {
+    @objc private func changeNotify() {
+        
+        presenter.updateNotify(notifySwitch.isOn)
+    }
+    
+    @objc private func changeBirthday() {
+        
+        presenter.updateBirthday(birthdayDatePicker.date)
+    }
+    
+    private func setupNavigationBar() {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
         navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
         navigationItem.hidesBackButton = isEditing
-    }
-    
-    private func addHideKeyboardOnTapGesture() {
-        
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboardOnTap))
-        view.addGestureRecognizer(gestureRecognizer)
-    }
-    
-    @objc private func hideKeyboardOnTap() {
-        
-        // TODO: animate
-        if nameTextField.isFirstResponder {
-            nameTextField.resignFirstResponder()
-        }
-        else {
-            surnameTextField.resignFirstResponder()
-        }
     }
     
     @objc private func editTapped() {
@@ -211,14 +210,51 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         }
     }
     
-    @objc private func changeNotify() {
+    private func addHideKeyboardOnTapGesture() {
         
-        presenter.updateNotify(notifySwitch.isOn)
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboardOnTap))
+        view.addGestureRecognizer(gestureRecognizer)
     }
     
-    @objc private func changeBirthday() {
+    @objc private func hideKeyboardOnTap() {
         
-        presenter.updateBirthday(birthdayDatePicker.date)
+        // TODO: animate
+        if nameTextField.isFirstResponder {
+            nameTextField.resignFirstResponder()
+        }
+        else {
+            surnameTextField.resignFirstResponder()
+        }
+    }
+    
+    private func subscribeNotification() {
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+    
+    @objc private func keyboardWillShow() {
+        
+        contentViewBottomAnchorConstraint.constant = -(view.frame.width - view.safeAreaInsets.top)
+        view.layoutIfNeeded()
+    }
+    
+    @objc private func keyboardWillHide() {
+        
+        contentViewBottomAnchorConstraint.constant = -30
+        
+        view.layoutIfNeeded()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
