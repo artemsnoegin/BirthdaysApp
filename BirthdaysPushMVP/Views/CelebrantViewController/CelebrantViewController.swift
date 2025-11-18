@@ -10,7 +10,8 @@ import UIKit
 protocol CelebrantPresenterProtocol {
     
     func viewDidLoad()
-    func updateCelebrant(name: String, surname: String, birthday: Date, notify: Bool)
+    func updateCelebrant(name: String, surname: String, birthday: Date)
+    func updateNotify(_ notify: Bool)
 }
 
 class CelebrantPresenter: CelebrantPresenterProtocol {
@@ -29,10 +30,17 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
         view?.configure(with: celebrant)
     }
     
-    func updateCelebrant(name: String, surname: String, birthday: Date, notify: Bool) {
+    func updateCelebrant(name: String, surname: String, birthday: Date) {
         celebrant.name = name
         celebrant.surname = surname
         celebrant.birthday = birthday
+        
+        view?.configure(with: celebrant)
+        completion?(celebrant)
+    }
+    
+    func updateNotify(_ notify: Bool) {
+        
         celebrant.notify = notify
         
         if notify {
@@ -41,7 +49,6 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
             NotificationManager.shared.removeNotification(id: celebrant.id.uuidString)
         }
         
-        view?.configure(with: celebrant)
         completion?(celebrant)
     }
 }
@@ -127,16 +134,19 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         
         nameTextField.isEnabled = isEditing
         surnameTextField.isEnabled = isEditing
-        notifySwitch.isEnabled = isEditing
         birthdayDatePicker.isEnabled = isEditing
         
         if !isEditing {
             
             presenter.updateCelebrant(name: nameTextField.text ?? "",
                                       surname: surnameTextField.text ?? "",
-                                      birthday: birthdayDatePicker.date,
-                                      notify: notifySwitch.isOn)
+                                      birthday: birthdayDatePicker.date)
         }
+    }
+    
+    @objc private func changeNotify() {
+        
+        presenter.updateNotify(notifySwitch.isOn)
     }
     
     func setupUI() {
@@ -176,7 +186,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         notifyLabel.font = .preferredFont(forTextStyle: .headline)
         notifyLabel.textColor = .secondaryLabel
         
-        notifySwitch.isEnabled = isEditing
+        notifySwitch.addTarget(self, action: #selector(changeNotify), for: .valueChanged)
         
         let notifyStack = UIStackView(arrangedSubviews: [notifyLabel, notifySwitch])
         
