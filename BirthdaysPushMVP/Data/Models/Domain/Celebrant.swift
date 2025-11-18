@@ -29,7 +29,7 @@ struct Celebrant {
         Calendar.current.dateComponents([.year], from: birthday, to: .now).year ?? 0
     }
     
-    var daysUntilNextBirthday: Int {
+    var daysBeforeCelebration: Int {
             let calendar = Calendar.current
             let now = Date()
             

@@ -10,7 +10,7 @@ import UIKit
 protocol CelebrantViewProtocol: AnyObject {
     
     func configureNameProperties(name: String, surname: String)
-    func configureDateProperties(age: Int, daysUntilNextBirthday: Int, birthday: Date?)
+    func configureDateProperties(age: Int, daysBeforeCelebration: Int, birthday: Date?)
     func configureNotifySwitch(isOn: Bool)
 }
 
@@ -19,7 +19,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     private var presenter: CelebrantPresenterProtocol
     
     private let ageLabel = UILabel()
-    private let numberOfDaysUntilNextBirthdayLabel = UILabel()
+    private let numberOfDaysBeforeCelebrationLabel = UILabel()
     
     private let nameTextField = UITextField()
     private let surnameTextField = UITextField()
@@ -56,26 +56,26 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         surnameTextField.text = surname
     }
     
-    func configureDateProperties(age: Int, daysUntilNextBirthday: Int, birthday: Date?) {
+    func configureDateProperties(age: Int, daysBeforeCelebration: Int, birthday: Date?) {
         
         if let date = birthday {
             birthdayDatePicker.date = date
         }
         
         ageLabel.text = "Age: \(age)"
-        numberOfDaysUntilNextBirthdayLabel.text = "\(daysUntilNextBirthday)"
+        numberOfDaysBeforeCelebrationLabel.text = "\(daysBeforeCelebration)"
         
-        if daysUntilNextBirthday > 60 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
+        if daysBeforeCelebration > 60 {
+            numberOfDaysBeforeCelebrationLabel.textColor = .systemGreen
         }
-        else if daysUntilNextBirthday > 30 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
+        else if daysBeforeCelebration > 30 {
+            numberOfDaysBeforeCelebrationLabel.textColor = .systemYellow
         }
-        else if daysUntilNextBirthday > 12 {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
+        else if daysBeforeCelebration > 12 {
+            numberOfDaysBeforeCelebrationLabel.textColor = .systemOrange
         }
         else {
-            numberOfDaysUntilNextBirthdayLabel.textColor = .systemRed
+            numberOfDaysBeforeCelebrationLabel.textColor = .systemRed
         }
     }
     
@@ -117,7 +117,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         divider.backgroundColor = .separator
         
         let notifyLabel = UILabel()
-        notifyLabel.text = "Notify"
+        notifyLabel.text = "Notify (on birthday's eve)"
         notifyLabel.font = .preferredFont(forTextStyle: .headline)
         notifyLabel.textColor = .secondaryLabel
         
@@ -125,14 +125,14 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         
         let notifyStack = UIStackView(arrangedSubviews: [notifyLabel, notifySwitch])
         
-        let daysUntilNextBirthdayLabel = UILabel()
-        daysUntilNextBirthdayLabel.text = "Days until next birthday"
-        daysUntilNextBirthdayLabel.font = .preferredFont(forTextStyle: .headline)
-        daysUntilNextBirthdayLabel.textColor = .secondaryLabel
+        let daysBeforeCelebrationLabel = UILabel()
+        daysBeforeCelebrationLabel.text = "Days before celebration"
+        daysBeforeCelebrationLabel.font = .preferredFont(forTextStyle: .headline)
+        daysBeforeCelebrationLabel.textColor = .secondaryLabel
         
-        numberOfDaysUntilNextBirthdayLabel.font = .preferredFont(forTextStyle: .headline)
+        numberOfDaysBeforeCelebrationLabel.font = .preferredFont(forTextStyle: .headline)
         
-        let daysLeftStack = UIStackView(arrangedSubviews: [daysUntilNextBirthdayLabel, numberOfDaysUntilNextBirthdayLabel])
+        let daysLeftStack = UIStackView(arrangedSubviews: [daysBeforeCelebrationLabel, numberOfDaysBeforeCelebrationLabel])
         daysLeftStack.distribution = .equalSpacing
         
         let stackView = UIStackView(arrangedSubviews: [nameTextField, surnameTextField, ageInfoStack, divider, notifyStack, daysLeftStack])

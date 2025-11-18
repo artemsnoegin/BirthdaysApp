@@ -32,7 +32,7 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
         
         view?.configureNameProperties(name: celebrant.name, surname: celebrant.surname)
         view?.configureDateProperties(age: celebrant.age,
-                        daysUntilNextBirthday: celebrant.daysUntilNextBirthday,
+                        daysBeforeCelebration: celebrant.daysBeforeCelebration,
                         birthday: celebrant.birthday)
         view?.configureNotifySwitch(isOn: celebrant.notify)
     }
@@ -54,7 +54,7 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
         
         completion?(celebrant)
         view?.configureDateProperties(age: celebrant.age,
-                                      daysUntilNextBirthday: celebrant.daysUntilNextBirthday,
+                                      daysBeforeCelebration: celebrant.daysBeforeCelebration,
                                       birthday: nil)
     }
     

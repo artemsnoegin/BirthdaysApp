@@ -14,7 +14,7 @@ class CelebrantTableViewCell: UITableViewCell {
     private let photoView = UIImageView()
     private let nameLabel = UILabel()
     private let birthdayLabel = UILabel()
-    private let countDownLabel = UILabel()
+    private let daysBeforeCelebrationLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -30,7 +30,7 @@ class CelebrantTableViewCell: UITableViewCell {
         
         nameLabel.text = celebrant.name + " " + celebrant.surname
         birthdayLabel.text = celebrant.birthday.formatted(date: .numeric, time: .omitted)
-        countDownLabel.text = "\(celebrant.daysUntilNextBirthday) days"
+        daysBeforeCelebrationLabel.text = "\(celebrant.daysBeforeCelebration) days"
     }
     
     private func setupUI() {
@@ -49,8 +49,8 @@ class CelebrantTableViewCell: UITableViewCell {
         birthdayLabel.font = .preferredFont(forTextStyle: .subheadline)
         birthdayLabel.textColor = .secondaryLabel
         
-        countDownLabel.font = .preferredFont(forTextStyle: .footnote)
-        countDownLabel.textColor = .secondaryLabel
+        daysBeforeCelebrationLabel.font = .preferredFont(forTextStyle: .footnote)
+        daysBeforeCelebrationLabel.textColor = .secondaryLabel
         
         let basicInfoStack = UIStackView(arrangedSubviews: [nameLabel, birthdayLabel])
         basicInfoStack.axis = .vertical
@@ -59,7 +59,7 @@ class CelebrantTableViewCell: UITableViewCell {
         basicInfoStack.spacing = 0
 
         
-        let hStack = UIStackView(arrangedSubviews: [photoView, basicInfoStack, countDownLabel])
+        let hStack = UIStackView(arrangedSubviews: [photoView, basicInfoStack, daysBeforeCelebrationLabel])
         hStack.axis = .horizontal
         hStack.spacing = 12
        
