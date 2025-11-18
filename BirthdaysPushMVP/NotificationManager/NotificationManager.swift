@@ -32,7 +32,7 @@ class NotificationManager {
         content.sound = .default
         
         guard let day = Calendar.current.date(byAdding: .day, value: -1, to: birthday),
-              let time = Calendar.current.date(bySettingHour: 15, minute: 52, second: 0, of: day)
+              let time = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: day)
         else {
             print("Error setting date")
             return

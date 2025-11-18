@@ -10,8 +10,9 @@ import UIKit
 protocol CelebrantPresenterProtocol {
     
     func viewDidLoad()
-    func updateCelebrant(name: String, surname: String, birthday: Date)
+    func updateName(name: String, surname: String)
     func updateNotify(_ notify: Bool)
+    func updateBirthday(_ date: Date)
 }
 
 class CelebrantPresenter: CelebrantPresenterProtocol {
@@ -27,23 +28,39 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
     
     func viewDidLoad() {
         
-        view?.configure(with: celebrant)
+        view?.configureNameProperties(name: celebrant.name, surname: celebrant.surname)
+        view?.configureDateProperties(age: celebrant.age,
+                        daysUntilNextBirthday: celebrant.daysUntilNextBirthday,
+                        birthday: celebrant.birthday)
+        view?.configureNotifySwitch(isOn: celebrant.notify)
     }
     
-    func updateCelebrant(name: String, surname: String, birthday: Date) {
+    func updateName(name: String, surname: String) {
+        
         celebrant.name = name
         celebrant.surname = surname
-        celebrant.birthday = birthday
+        updateNotification()
         
-        view?.configure(with: celebrant)
+        view?.configureNameProperties(name: celebrant.name, surname: celebrant.surname)
         completion?(celebrant)
+    }
+    
+    func updateBirthday(_ date: Date) {
+        
+        celebrant.birthday = date
+        updateNotification()
+        
+        completion?(celebrant)
+        view?.configureDateProperties(age: celebrant.age,
+                                      daysUntilNextBirthday: celebrant.daysUntilNextBirthday,
+                                      birthday: nil)
     }
     
     func updateNotify(_ notify: Bool) {
         
         celebrant.notify = notify
         
-        if notify {
+        if celebrant.notify {
             NotificationManager.shared.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
         } else {
             NotificationManager.shared.removeNotification(id: celebrant.id.uuidString)
@@ -51,11 +68,22 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
         
         completion?(celebrant)
     }
+    
+    private func updateNotification() {
+        
+        if celebrant.notify {
+            
+            NotificationManager.shared.removeNotification(id: celebrant.id.uuidString)
+            NotificationManager.shared.addNotification(id: celebrant.id.uuidString, celebrantName: celebrant.name, birthday: celebrant.birthday)
+        }
+    }
 }
 
 protocol CelebrantViewProtocol: AnyObject {
     
-    func configure(with celebrant: Celebrant)
+    func configureNameProperties(name: String, surname: String)
+    func configureDateProperties(age: Int, daysUntilNextBirthday: Int, birthday: Date?)
+    func configureNotifySwitch(isOn: Bool)
 }
 
 class CelebrantViewController: UIViewController, CelebrantViewProtocol {
@@ -87,29 +115,35 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         presenter.viewDidLoad()
         
         setupUI()
         setupNavigationBar()
     }
     
-    func configure(with celebrant: Celebrant) {
+    func configureNameProperties(name: String, surname: String) {
         
-        nameTextField.text = celebrant.name
-        surnameTextField.text = celebrant.surname
-        ageLabel.text = "Age: \(celebrant.age)"
-        numberOfDaysUntilNextBirthdayLabel.text = "\(celebrant.daysUntilNextBirthday)"
+        nameTextField.text = name
+        surnameTextField.text = surname
+    }
+    
+    func configureDateProperties(age: Int, daysUntilNextBirthday: Int, birthday: Date?) {
         
-        birthdayDatePicker.date = celebrant.birthday
-        notifySwitch.isOn = celebrant.notify
+        if let date = birthday {
+            birthdayDatePicker.date = date
+        }
         
-        if celebrant.daysUntilNextBirthday > 60 {
+        ageLabel.text = "Age: \(age)"
+        numberOfDaysUntilNextBirthdayLabel.text = "\(daysUntilNextBirthday)"
+        
+        if daysUntilNextBirthday > 60 {
             numberOfDaysUntilNextBirthdayLabel.textColor = .systemGreen
         }
-        else if celebrant.daysUntilNextBirthday > 30 {
+        else if daysUntilNextBirthday > 30 {
             numberOfDaysUntilNextBirthdayLabel.textColor = .systemYellow
         }
-        else if celebrant.daysUntilNextBirthday > 12 {
+        else if daysUntilNextBirthday > 12 {
             numberOfDaysUntilNextBirthdayLabel.textColor = .systemOrange
         }
         else {
@@ -117,36 +151,9 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         }
     }
     
-    func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
-        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
-        navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
-        navigationItem.hidesBackButton = isEditing
-    }
-    
-    @objc private func editTapped() {
+    func configureNotifySwitch(isOn: Bool) {
         
-        isEditing.toggle()
-        
-        navigationItem.rightBarButtonItem?.title = isEditing ? "Save" : "Edit"
-        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
-        navigationItem.hidesBackButton = isEditing
-        
-        nameTextField.isEnabled = isEditing
-        surnameTextField.isEnabled = isEditing
-        birthdayDatePicker.isEnabled = isEditing
-        
-        if !isEditing {
-            
-            presenter.updateCelebrant(name: nameTextField.text ?? "",
-                                      surname: surnameTextField.text ?? "",
-                                      birthday: birthdayDatePicker.date)
-        }
-    }
-    
-    @objc private func changeNotify() {
-        
-        presenter.updateNotify(notifySwitch.isOn)
+        notifySwitch.isOn = isOn
     }
     
     func setupUI() {
@@ -172,7 +179,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         
         birthdayDatePicker.datePickerMode = .date
         birthdayDatePicker.preferredDatePickerStyle = .compact
-        birthdayDatePicker.isEnabled = isEditing
+        birthdayDatePicker.addTarget(self, action: #selector(changeBirthday), for: .valueChanged)
         
         let ageInfoStack = UIStackView(arrangedSubviews: [ageLabel, birthdayDatePicker])
         
@@ -230,6 +237,42 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
+    }
+    
+    func setupNavigationBar() {
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
+        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
+        navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
+        navigationItem.hidesBackButton = isEditing
+    }
+    
+    @objc private func editTapped() {
+        
+        isEditing.toggle()
+        
+        navigationItem.rightBarButtonItem?.title = isEditing ? "Save" : "Edit"
+        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
+        navigationItem.hidesBackButton = isEditing
+        
+        nameTextField.isEnabled = isEditing
+        surnameTextField.isEnabled = isEditing
+        
+        if !isEditing {
+            
+            presenter.updateName(name: nameTextField.text ?? "",
+                                      surname: surnameTextField.text ?? "")
+        }
+    }
+    
+    @objc private func changeNotify() {
+        
+        presenter.updateNotify(notifySwitch.isOn)
+    }
+    
+    @objc private func changeBirthday() {
+        
+        presenter.updateBirthday(birthdayDatePicker.date)
     }
 }
 
