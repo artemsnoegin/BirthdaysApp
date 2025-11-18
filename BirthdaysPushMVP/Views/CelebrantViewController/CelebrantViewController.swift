@@ -48,6 +48,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         
         setupUI()
         setupNavigationBar()
+        addHideKeyboardOnTapGesture()
     }
     
     func configureNameProperties(name: String, surname: String) {
@@ -173,6 +174,23 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
         navigationItem.hidesBackButton = isEditing
+    }
+    
+    private func addHideKeyboardOnTapGesture() {
+        
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboardOnTap))
+        view.addGestureRecognizer(gestureRecognizer)
+    }
+    
+    @objc private func hideKeyboardOnTap() {
+        
+        // TODO: animate
+        if nameTextField.isFirstResponder {
+            nameTextField.resignFirstResponder()
+        }
+        else {
+            surnameTextField.resignFirstResponder()
+        }
     }
     
     @objc private func editTapped() {
