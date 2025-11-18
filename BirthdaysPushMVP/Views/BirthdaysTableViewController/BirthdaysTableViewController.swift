@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol BirthdaysTableViewProtocol: AnyObject {
+    
+    func reloadTableView()
+}
+
 class BirthdaysTableViewController: UIViewController, BirthdaysTableViewProtocol {
     
     private let tableView = UITableView()

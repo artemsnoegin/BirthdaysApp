@@ -5,16 +5,29 @@
 //  Created by Артём Сноегин on 15.11.2025.
 //
 
+protocol BirthdaysPresenterProtocol {
+    
+    func viewDidLoad()
+    
+    func celebrant(for index: Int) -> Celebrant
+    func count() -> Int
+    
+    func createCelebrant()
+    func selectCelebrant(for index: Int)
+    func update(_ celebrant: Celebrant)
+    func remove(at index: Int)
+}
+
 class BirthdaysPresenter: BirthdaysPresenterProtocol {
     
     weak var view: BirthdaysTableViewProtocol?
     
-    private var router: BirthdaysRouter
+    private var router: Router
     
     private var repository: Repository
     private var birthdays = [Celebrant]()
     
-    init(router: BirthdaysRouter, repository: Repository) {
+    init(router: Router, repository: Repository) {
         self.router = router
         self.repository = repository
     }

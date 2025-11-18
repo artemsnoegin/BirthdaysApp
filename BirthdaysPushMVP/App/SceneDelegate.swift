@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         
-        let rootViewController = BirthdaysRouter.createModule()
+        let rootViewController = Router.createModule()
         let navigationController = UINavigationController(rootViewController: rootViewController)
         
         window.rootViewController = navigationController

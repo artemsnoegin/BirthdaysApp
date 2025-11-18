@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BirthdaysRouter {
+class Router {
     
     weak var viewController: UIViewController?
     
@@ -23,7 +23,7 @@ class BirthdaysRouter {
     
     static func createModule() -> UIViewController {
         
-        let router = BirthdaysRouter()
+        let router = Router()
         let repository = CoreDataRepository()
         
         let presenter = BirthdaysPresenter(router: router, repository: repository)

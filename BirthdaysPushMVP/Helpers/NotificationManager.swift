@@ -7,9 +7,9 @@
 
 import UserNotifications
 
-class NotificationManager {
+class UserNotificationManager {
     
-    static let shared = NotificationManager()
+    static let shared = UserNotificationManager()
     
     private let notificationCentre = UNUserNotificationCenter.current()
     
@@ -36,7 +36,7 @@ class NotificationManager {
         else {
             print("Error setting date")
             return
-        }
+        }          
         
         let components = Calendar.current.dateComponents([.day, .month, .hour, .minute], from: time)
         

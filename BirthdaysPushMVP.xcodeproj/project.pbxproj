@@ -7,24 +7,36 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		D94ADF862EC60F56009D9F11 /* BirthdaysPushMVP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BirthdaysPushMVP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D94ADF862EC60F56009D9F11 /* BirthdaysPushMVP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = BirthdaysPushMVP.app; path = "/Users/artemsnoegin/Desktop/Development/TeachMeSkills/Homework Projects/BirthdaysPushMVP/build/Debug-iphoneos/BirthdaysPushMVP.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D94ADF982EC60F57009D9F11 /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */ = {
+		D96BA3342ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Data/Model.xcdatamodeld,
 				Resources/Info.plist,
 			);
 			target = D94ADF852EC60F56009D9F11 /* BirthdaysPushMVP */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D96BA3352ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "Compile Sources" phase from "BirthdaysPushMVP" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D94ADF822EC60F56009D9F11 /* Sources */;
+			membershipExceptions = (
+				Data/Model.xcdatamodeld,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D94ADF882EC60F56009D9F11 /* BirthdaysPushMVP */ = {
+		D96BA3222ECCCC2F00093AAB /* BirthdaysPushMVP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				D94ADF982EC60F57009D9F11 /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */,
+				D96BA3342ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */,
+				D96BA3352ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "Compile Sources" phase from "BirthdaysPushMVP" target */,
 			);
 			path = BirthdaysPushMVP;
 			sourceTree = "<group>";
@@ -45,17 +57,8 @@
 		D94ADF7D2EC60F56009D9F11 = {
 			isa = PBXGroup;
 			children = (
-				D94ADF882EC60F56009D9F11 /* BirthdaysPushMVP */,
-				D94ADF872EC60F56009D9F11 /* Products */,
+				D96BA3222ECCCC2F00093AAB /* BirthdaysPushMVP */,
 			);
-			sourceTree = "<group>";
-		};
-		D94ADF872EC60F56009D9F11 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D94ADF862EC60F56009D9F11 /* BirthdaysPushMVP.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,7 +77,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D94ADF882EC60F56009D9F11 /* BirthdaysPushMVP */,
+				D96BA3222ECCCC2F00093AAB /* BirthdaysPushMVP */,
 			);
 			name = BirthdaysPushMVP;
 			packageProductDependencies = (
@@ -108,7 +111,7 @@
 			mainGroup = D94ADF7D2EC60F56009D9F11;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = D94ADF872EC60F56009D9F11 /* Products */;
+			productRefGroup = D94ADF7D2EC60F56009D9F11;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
