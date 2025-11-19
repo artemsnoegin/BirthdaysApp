@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 protocol CelebrantViewProtocol: AnyObject {
     
@@ -14,7 +15,7 @@ protocol CelebrantViewProtocol: AnyObject {
     func configureNotifySwitch(isOn: Bool)
 }
 
-class CelebrantViewController: UIViewController, CelebrantViewProtocol {
+class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPickerViewControllerDelegate {
     
     private var presenter: CelebrantPresenterProtocol
     
@@ -26,6 +27,9 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     
     private let birthdayDatePicker = UIDatePicker()
     private let notifySwitch = UISwitch()
+    
+    private let photoView = UIImageView()
+    private let addPhotoButton = UIButton()
     
     private let contentView = UIView()
     private var contentViewBottomAnchorConstraint: NSLayoutConstraint!
@@ -90,11 +94,15 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     private func setupUI() {
         view.backgroundColor = .systemBackground
         
-        let photoView = UIImageView()
         photoView.backgroundColor = .systemGray6
         
         view.addSubview(photoView)
         photoView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addPhotoButton.setTitle("Change photo", for: .normal)
+        addPhotoButton.configuration = .plain()
+        addPhotoButton.isHidden = !isEditing
+        addPhotoButton.addTarget(self, action: #selector(presentPHPicker), for: .touchUpInside)
         
         nameTextField.placeholder = "Name"
         nameTextField.font = .preferredFont(forTextStyle: .extraLargeTitle)
@@ -138,24 +146,21 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         let daysLeftStack = UIStackView(arrangedSubviews: [daysBeforeCelebrationLabel, numberOfDaysBeforeCelebrationLabel])
         daysLeftStack.distribution = .equalSpacing
         
-        let stackView = UIStackView(arrangedSubviews: [nameTextField, surnameTextField, ageInfoStack, divider, notifyStack, daysLeftStack])
+        let stackView = UIStackView(arrangedSubviews: [addPhotoButton, nameTextField, surnameTextField, ageInfoStack, divider, notifyStack, daysLeftStack])
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.setCustomSpacing(0, after: nameTextField)
         stackView.setCustomSpacing(0, after: surnameTextField)
-        stackView.layer.cornerRadius = 12
-        
+                
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.backgroundColor = .systemBackground
-        contentView.layer.cornerRadius = 30
+        contentView.layer.cornerRadius = 20
         view.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
-        
-        
-        contentViewBottomAnchorConstraint = contentView.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -30)
+        contentViewBottomAnchorConstraint = contentView.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -32)
         contentViewBottomAnchorConstraint.isActive = true
         
         NSLayoutConstraint.activate([
@@ -168,10 +173,43 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
             contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 26),
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 28),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
+    }
+    
+    @objc private func presentPHPicker() {
+        
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        
+        present(picker, animated: true)
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let provider = results.first?.itemProvider else { return }
+        
+        if provider.canLoadObject(ofClass: UIImage.self) {
+            provider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+                if let photo = object as? UIImage {
+                    
+                    DispatchQueue.main.async {
+                        self?.photoView.image = photo
+                    }
+                }
+            }
+        }
+  
+        if let sheet = picker.sheetPresentationController {
+            sheet.animateChanges {
+                picker.dismiss(animated: true)
+            }
+        }
     }
     
     @objc private func changeNotify() {
@@ -187,9 +225,12 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     private func setupNavigationBar() {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
-        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
         navigationItem.hidesBackButton = isEditing
+        
+        if #available(iOS 26.0, *) {
+            navigationItem.rightBarButtonItem?.style = isEditing ? .prominent : .plain
+        }
     }
     
     @objc private func editTapped() {
@@ -199,9 +240,17 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
         navigationItem.rightBarButtonItem?.title = isEditing ? "Save" : "Edit"
         navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         navigationItem.hidesBackButton = isEditing
+        if #available(iOS 26.0, *) {
+            navigationItem.rightBarButtonItem?.style = isEditing ? .prominent : .plain
+        }
         
         nameTextField.isEnabled = isEditing
         surnameTextField.isEnabled = isEditing
+        addPhotoButton.isHidden = !isEditing
+        
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
         
         if !isEditing {
             
@@ -248,7 +297,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol {
     
     @objc private func keyboardWillHide() {
         
-        contentViewBottomAnchorConstraint.constant = -30
+        contentViewBottomAnchorConstraint.constant = -32
         
         view.layoutIfNeeded()
     }
