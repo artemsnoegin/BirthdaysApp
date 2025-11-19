@@ -13,6 +13,7 @@ protocol CelebrantViewProtocol: AnyObject {
     func configureNameProperties(name: String, surname: String)
     func configureDateProperties(age: Int, daysBeforeCelebration: Int, birthday: Date?)
     func configureNotifySwitch(isOn: Bool)
+    func configurePhoto(path: String)
 }
 
 class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPickerViewControllerDelegate {
@@ -89,6 +90,11 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
     func configureNotifySwitch(isOn: Bool) {
         
         notifySwitch.isOn = isOn
+    }
+    
+    func configurePhoto(path: String) {
+        
+        photoView.image = ImageFileManager.shared.loadImage(path)
     }
     
     private func setupUI() {
@@ -199,7 +205,12 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
                 if let photo = object as? UIImage {
                     
                     DispatchQueue.main.async {
+                        
                         self?.photoView.image = photo
+                    }
+                    if let data = photo.pngData() {
+                        
+                        self?.presenter.updatePhoto(data)
                     }
                 }
             }

@@ -31,14 +31,21 @@ class CelebrantTableViewCell: UITableViewCell {
         nameLabel.text = celebrant.name + " " + celebrant.surname
         birthdayLabel.text = celebrant.birthday.formatted(date: .numeric, time: .omitted)
         daysBeforeCelebrationLabel.text = "\(celebrant.daysBeforeCelebration) days"
+        
+        if let path = celebrant.photoPath {
+            photoView.image = ImageFileManager.shared.loadImage(path)
+            photoView.contentMode = .scaleAspectFill
+        }
+        else {
+            photoView.image = UIImage(systemName: "gift")
+            photoView.contentMode = .center
+        }
     }
     
     private func setupUI() {
         
-        photoView.image = UIImage(systemName: "gift")
         photoView.tintColor = .systemBrown
         photoView.clipsToBounds = true
-        photoView.contentMode = .center
         photoView.backgroundColor = .systemGray6
         photoView.layer.cornerRadius = 45 / 2
         photoView.heightAnchor.constraint(equalToConstant: 45).isActive = true

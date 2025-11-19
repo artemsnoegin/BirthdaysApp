@@ -22,6 +22,7 @@ struct Celebrant {
         self.surname = surname
         self.birthday = birthday
         self.notify = notify
+        self.photoPath = photoPath
     }
     
     // TODO: refactor !

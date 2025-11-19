@@ -35,8 +35,9 @@ class BirthdaysTableViewController: UIViewController, BirthdaysTableViewProtocol
     }
     
     func reloadTableView() {
-        
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     private func setupUI() {

@@ -13,6 +13,7 @@ protocol CelebrantPresenterProtocol {
     func updateName(name: String, surname: String)
     func updateNotify(_ notify: Bool)
     func updateBirthday(_ date: Date)
+    func updatePhoto(_ data: Data)
 }
 
 class CelebrantPresenter: CelebrantPresenterProtocol {
@@ -35,6 +36,10 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
                         daysBeforeCelebration: celebrant.daysBeforeCelebration,
                         birthday: celebrant.birthday)
         view?.configureNotifySwitch(isOn: celebrant.notify)
+        
+        if let path = celebrant.photoPath {
+            view?.configurePhoto(path: path)
+        }
     }
     
     func updateName(name: String, surname: String) {
@@ -68,6 +73,12 @@ class CelebrantPresenter: CelebrantPresenterProtocol {
             userNotificationManager.removeNotification(id: celebrant.id.uuidString)
         }
         
+        completion?(celebrant)
+    }
+    
+    func updatePhoto(_ data: Data) {
+        
+        celebrant.photoPath = ImageFileManager.shared.saveImage(data, identifier: celebrant.id.uuidString)
         completion?(celebrant)
     }
     
