@@ -11,16 +11,6 @@ class ApplicationRouter {
     
     weak var viewController: UIViewController?
     
-    func showCelebrantViewController(_ celebrant: Celebrant, isEditing: Bool, completion: @escaping (Celebrant) -> Void) {
-        
-        let presenter = CelebrantPresenter(celebrant: celebrant)
-        presenter.completion = completion
-        let celebrantViewController = CelebrantViewController(presenter: presenter, isEditing: isEditing)
-        presenter.view = celebrantViewController
-        
-        viewController?.navigationController?.pushViewController(celebrantViewController, animated: true)
-    }
-    
     static func createModule() -> UIViewController {
         
         let router = ApplicationRouter()
@@ -33,5 +23,15 @@ class ApplicationRouter {
         router.viewController = view
         
         return view
+    }
+    
+    func showCelebrantViewController(_ celebrant: Celebrant, isEditing: Bool, completion: @escaping (Celebrant) -> Void) {
+        
+        let presenter = CelebrantPresenter(celebrant: celebrant)
+        presenter.completion = completion
+        let celebrantViewController = CelebrantViewController(presenter: presenter, isEditing: isEditing)
+        presenter.view = celebrantViewController
+        
+        viewController?.navigationController?.pushViewController(celebrantViewController, animated: true)
     }
 }

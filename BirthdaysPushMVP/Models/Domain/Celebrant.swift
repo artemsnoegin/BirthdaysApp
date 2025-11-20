@@ -25,7 +25,7 @@ struct Celebrant {
         self.photoPath = photoPath
     }
     
-    // TODO: refactor !
+    // TODO: вынести в отдельный класс
     var age: Int {
         Calendar.current.dateComponents([.year], from: birthday, to: .now).year ?? 0
     }

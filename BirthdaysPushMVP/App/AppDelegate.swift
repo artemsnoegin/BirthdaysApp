@@ -14,8 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        UserNotificationManager.shared.setDelegate(self)
         UserNotificationManager.shared.requestAuthorization()
-        UNUserNotificationCenter.current().delegate = self
         return true
     }
 

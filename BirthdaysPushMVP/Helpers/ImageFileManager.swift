@@ -13,11 +13,13 @@ class ImageFileManager {
     static let shared = ImageFileManager()
     
     private let fileManager = FileManager.default
+    
     private var directoryPath: URL {
         fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
     
     func saveImage(_ data: Data, identifier: String) -> String {
+        
         let imagePath = directoryPath.appendingPathComponent(identifier + ".png")
 
         do {
@@ -27,11 +29,12 @@ class ImageFileManager {
             print(error.localizedDescription)
         }
         
-        return imagePath.path()
+        return identifier + ".png"
     }
     
     func loadImage(_ imagePath: String) -> UIImage {
-        guard let data = fileManager.contents(atPath: imagePath),
+        
+        guard let data = fileManager.contents(atPath: directoryPath.appendingPathComponent(imagePath).path()),
               let image = UIImage(data: data)
         else {
             return UIImage()

@@ -101,6 +101,7 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
         view.backgroundColor = .systemBackground
         
         photoView.backgroundColor = .systemGray6
+        photoView.contentMode = .scaleAspectFill
         
         view.addSubview(photoView)
         photoView.translatesAutoresizingMaskIntoConstraints = false
@@ -129,8 +130,8 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
         let ageInfoStack = UIStackView(arrangedSubviews: [ageLabel, birthdayDatePicker])
         
         let divider = UIView()
-        divider.heightAnchor.constraint(equalToConstant: 2).isActive = true
-        divider.layer.cornerRadius = 1
+        divider.heightAnchor.constraint(equalToConstant: 1.5).isActive = true
+        divider.layer.cornerRadius = 1.5 / 2
         divider.backgroundColor = .separator
         
         let notifyLabel = UILabel()
@@ -162,15 +163,20 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.backgroundColor = .systemBackground
-        contentView.layer.cornerRadius = 20
         view.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         contentViewBottomAnchorConstraint = contentView.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -32)
         contentViewBottomAnchorConstraint.isActive = true
         
+        if #available(iOS 26, *) {
+            photoView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
+        else {
+            photoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        }
+        
         NSLayoutConstraint.activate([
-            photoView.topAnchor.constraint(equalTo: view.topAnchor),
             photoView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             photoView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             photoView.heightAnchor.constraint(equalTo: photoView.widthAnchor),
@@ -179,12 +185,13 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
             contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 28),
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
     }
     
+    // TODO: вынести в router и presenter
     @objc private func presentPHPicker() {
         
         var config = PHPickerConfiguration()
@@ -235,6 +242,8 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
     
     private func setupNavigationBar() {
         
+        navigationItem.largeTitleDisplayMode = .never
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: isEditing ? "Save" : "Edit", image: nil, target: self, action: #selector(editTapped))
         navigationItem.rightBarButtonItem?.isEnabled = nameTextField.hasText ? true : false
         navigationItem.hidesBackButton = isEditing
@@ -249,10 +258,10 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
         isEditing.toggle()
         
         navigationItem.rightBarButtonItem?.title = isEditing ? "Save" : "Edit"
-        navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         navigationItem.hidesBackButton = isEditing
         if #available(iOS 26.0, *) {
             navigationItem.rightBarButtonItem?.style = isEditing ? .prominent : .plain
+            navigationItem.rightBarButtonItem?.tintColor = isEditing ? .systemGreen : .label
         }
         
         nameTextField.isEnabled = isEditing
@@ -278,7 +287,6 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
     
     @objc private func hideKeyboardOnTap() {
         
-        // TODO: animate
         if nameTextField.isFirstResponder {
             nameTextField.resignFirstResponder()
         }
@@ -309,7 +317,6 @@ class CelebrantViewController: UIViewController, CelebrantViewProtocol, PHPicker
     @objc private func keyboardWillHide() {
         
         contentViewBottomAnchorConstraint.constant = -32
-        
         view.layoutIfNeeded()
     }
     
@@ -330,10 +337,3 @@ extension CelebrantViewController: UITextFieldDelegate {
         }
     }
 }
-
-//#Preview {
-//    
-//    let celebrants = MockRepository().fetch()
-//    let view = CelebrantViewController(celebrant: celebrants[1])
-//    return UINavigationController(rootViewController: view)
-//}

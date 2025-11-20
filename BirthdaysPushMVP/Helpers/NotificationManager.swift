@@ -13,8 +13,14 @@ class UserNotificationManager {
     
     private let notificationCentre = UNUserNotificationCenter.current()
     
+    func setDelegate(_ delegate: UNUserNotificationCenterDelegate) {
+        
+        notificationCentre.delegate = delegate
+    }
+    
     func requestAuthorization() {
         
+        // TODO: Добавить обработку ошибок
         notificationCentre.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
                 //
@@ -24,6 +30,7 @@ class UserNotificationManager {
         }
     }
     
+    // TODO: обработка ошибки когда пользователь запретил нотификацию (.getNotificationSetting)
     func addNotification(id: String, celebrantName: String, birthday: Date) {
         
         let content = UNMutableNotificationContent()

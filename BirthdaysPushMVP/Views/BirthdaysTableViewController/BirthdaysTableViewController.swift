@@ -96,18 +96,13 @@ extension BirthdaysTableViewController: UITableViewDelegate, UITableViewDataSour
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    // TODO: вызов deleteRow через презентер ?
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
             
             presenter.remove(at: indexPath.row)
-            // TODO: refactor ?
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
 }
-
-//#Preview {
-//    let presenter = BirthdaysPresenter(repository: MockRepository(), view: self)
-//    return UINavigationController(rootViewController: BirthdaysTableViewController(presenter: presenter))
-//}

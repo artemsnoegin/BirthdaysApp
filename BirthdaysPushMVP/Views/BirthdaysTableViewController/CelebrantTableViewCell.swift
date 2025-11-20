@@ -82,13 +82,3 @@ class CelebrantTableViewCell: UITableViewCell {
         ])
     }
 }
-
-//#Preview {
-//    
-//    let celebrant = Celebrant(name: "Artem", surname: "Snoegin", birthday: .now)
-//    
-//    let cell = CelebrantTableViewCell()
-//    cell.configure(for: celebrant)
-//    
-//    return UINavigationController(rootViewController: BirthdaysTableViewController())
-//}
