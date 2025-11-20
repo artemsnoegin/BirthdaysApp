@@ -22,12 +22,12 @@ class BirthdaysPresenter: BirthdaysPresenterProtocol {
     
     weak var view: BirthdaysTableViewProtocol?
     
-    private var router: Router
+    private var router: ApplicationRouter
     
     private var repository: Repository
     private var birthdays = [Celebrant]()
     
-    init(router: Router, repository: Repository) {
+    init(router: ApplicationRouter, repository: Repository) {
         self.router = router
         self.repository = repository
     }

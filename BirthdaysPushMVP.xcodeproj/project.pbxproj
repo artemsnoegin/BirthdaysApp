@@ -7,36 +7,24 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		D94ADF862EC60F56009D9F11 /* BirthdaysPushMVP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = BirthdaysPushMVP.app; path = "/Users/artemsnoegin/Desktop/Development/TeachMeSkills/Homework Projects/BirthdaysPushMVP/build/Debug-iphoneos/BirthdaysPushMVP.app"; sourceTree = "<absolute>"; };
+		D96BA4502ECF058800093AAB /* BirthdaysPushMVP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = BirthdaysPushMVP.app; path = "/Users/artemsnoegin/Desktop/Development/TeachMeSkills/Homework Projects/BirthdaysPushMVP/build/Debug-iphoneos/BirthdaysPushMVP.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		D96BA3342ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Data/Model.xcdatamodeld,
 				Resources/Info.plist,
 			);
 			target = D94ADF852EC60F56009D9F11 /* BirthdaysPushMVP */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		D96BA3352ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "Compile Sources" phase from "BirthdaysPushMVP" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = D94ADF822EC60F56009D9F11 /* Sources */;
-			membershipExceptions = (
-				Data/Model.xcdatamodeld,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D96BA3222ECCCC2F00093AAB /* BirthdaysPushMVP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				D96BA3342ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "BirthdaysPushMVP" target */,
-				D96BA3352ECCCC2F00093AAB /* Exceptions for "BirthdaysPushMVP" folder in "Compile Sources" phase from "BirthdaysPushMVP" target */,
 			);
 			path = BirthdaysPushMVP;
 			sourceTree = "<group>";
@@ -83,7 +71,7 @@
 			packageProductDependencies = (
 			);
 			productName = BirthdaysPushMVP;
-			productReference = D94ADF862EC60F56009D9F11 /* BirthdaysPushMVP.app */;
+			productReference = D96BA4502ECF058800093AAB /* BirthdaysPushMVP.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
